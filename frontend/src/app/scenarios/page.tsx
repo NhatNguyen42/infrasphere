@@ -30,26 +30,16 @@ function ParamSlider({
           {value.toFixed(step < 1 ? 1 : 0)}{unit}
         </span>
       </div>
-      {/* Track + native input stacked: input is in normal flow (correct hit area),
-          decorative fill sits behind it via absolute positioning */}
-      <div className="relative py-2">
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-white/[0.06] rounded-full overflow-hidden pointer-events-none">
-          <motion.div
-            className="h-full rounded-full"
-            style={{ background: `linear-gradient(90deg, ${color}80, ${color})`, width: `${pct}%` }}
-            initial={false}
-            animate={{ width: `${pct}%` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        </div>
-        <input
-          type="range"
-          min={min} max={max} step={step} value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value))}
-          style={{ background: "transparent" }}
-          className="relative w-full cursor-pointer"
-        />
-      </div>
+      <input
+        type="range"
+        min={min} max={max} step={step} value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="param-slider w-full cursor-pointer block"
+        style={{
+          "--slider-color": color,
+          "--slider-pct": `${pct}%`,
+        } as React.CSSProperties}
+      />
       <p className="text-[10px] text-slate-500">{description}</p>
     </div>
   );
