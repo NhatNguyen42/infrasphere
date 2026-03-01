@@ -30,22 +30,27 @@ function ParamSlider({
           {value.toFixed(step < 1 ? 1 : 0)}{unit}
         </span>
       </div>
-      <div className="relative h-2 bg-white/[0.06] rounded-full overflow-hidden">
-        <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{ background: `linear-gradient(90deg, ${color}80, ${color})`, width: `${pct}%` }}
-          initial={false}
-          animate={{ width: `${pct}%` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      {/* Wrapper: visual track + invisible native input stacked */}
+      <div className="relative h-7 flex items-center">
+        {/* Visual filled track */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-white/[0.06] rounded-full overflow-hidden pointer-events-none">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: `linear-gradient(90deg, ${color}80, ${color})`, width: `${pct}%` }}
+            initial={false}
+            animate={{ width: `${pct}%` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          />
+        </div>
+        {/* Native range input covers full area — transparent but interactive */}
+        <input
+          type="range"
+          min={min} max={max} step={step} value={value}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="absolute inset-0 w-full opacity-0 cursor-pointer"
         />
       </div>
-      <input
-        type="range"
-        min={min} max={max} step={step} value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full -mt-3 relative z-10 opacity-0 cursor-pointer h-6"
-      />
-      <p className="text-[10px] text-slate-500 -mt-1">{description}</p>
+      <p className="text-[10px] text-slate-500">{description}</p>
     </div>
   );
 }
