@@ -89,7 +89,7 @@ export default function ForecastsPage() {
   const tooltipStyle = { background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 11 };
 
   return (
-    <div className="max-w-[1600px] mx-auto px-6 py-8 space-y-6">
+    <div className="max-w-[min(1600px,92vw)] mx-auto px-6 py-8 space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-extrabold tracking-tight">
           <span className="gradient-text">Power Demand Forecasts</span>
