@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import { motion } from "framer-motion";
 import {
   ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
   BarChart, Bar,
 } from "recharts";
-import { Search, Filter, ArrowUpDown } from "lucide-react";
+import { Search, ArrowUpDown, BarChart3 } from "lucide-react";
 
 import type { Security, SectorBreakdown, HeatmapCell } from "@/lib/api";
 import {
@@ -16,47 +17,45 @@ import { CATEGORY_COLORS } from "@/lib/globe-utils";
 import BentoCard from "@/components/BentoCard";
 
 // ---------------------------------------------------------------------------
-// Treemap-ish Heatmap (using simple divs instead of a heavy lib)
+// Heatmap Grid
 // ---------------------------------------------------------------------------
 function HeatmapGrid({ cells }: { cells: HeatmapCell[] }) {
   const maxCap = Math.max(...cells.map((c) => c.market_cap_bn), 1);
   const maxYtd = Math.max(...cells.map((c) => Math.abs(c.ytd_return)), 1);
 
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1.5">
       {cells
         .sort((a, b) => b.market_cap_bn - a.market_cap_bn)
         .slice(0, 30)
-        .map((c) => {
+        .map((c, i) => {
           const sizeRatio = Math.max(c.market_cap_bn / maxCap, 0.15);
-          const width = Math.max(48, 120 * sizeRatio);
+          const width = Math.max(52, 120 * sizeRatio);
           const ytdNorm = c.ytd_return / maxYtd;
-          const r = ytdNorm < 0 ? 200 + Math.abs(ytdNorm) * 55 : 40;
-          const g = ytdNorm > 0 ? 140 + ytdNorm * 80 : 40;
+          const r = ytdNorm < 0 ? 200 + Math.abs(ytdNorm) * 55 : 30;
+          const g = ytdNorm > 0 ? 140 + ytdNorm * 80 : 30;
           const b = 60;
           return (
-            <div
+            <motion.div
               key={c.ticker}
-              className="rounded-lg flex flex-col items-center justify-center text-center p-1 border border-white/5 cursor-default"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.02, duration: 0.3 }}
+              className="rounded-xl flex flex-col items-center justify-center text-center p-1.5 border border-white/[0.06] cursor-default hover:border-white/20 hover:scale-105 transition-all duration-200"
               style={{
                 width,
-                height: Math.max(36, width * 0.55),
-                background: `rgba(${r},${g},${b},0.35)`,
+                height: Math.max(40, width * 0.55),
+                background: `linear-gradient(135deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.15))`,
               }}
               title={`${c.name}\nYTD: ${c.ytd_return > 0 ? "+" : ""}${c.ytd_return}%\nMCap: $${c.market_cap_bn}B`}
             >
               <span className="text-[10px] font-mono font-bold text-white/90">
                 {c.ticker}
               </span>
-              <span
-                className={`text-[9px] font-mono ${
-                  c.ytd_return >= 0 ? "text-emerald-300" : "text-red-300"
-                }`}
-              >
-                {c.ytd_return > 0 ? "+" : ""}
-                {c.ytd_return.toFixed(0)}%
+              <span className={`text-[9px] font-mono font-bold ${c.ytd_return >= 0 ? "text-emerald-300" : "text-red-300"}`}>
+                {c.ytd_return > 0 ? "+" : ""}{c.ytd_return.toFixed(0)}%
               </span>
-            </div>
+            </motion.div>
           );
         })}
     </div>
@@ -91,14 +90,11 @@ export default function SecuritiesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Client-side filter/sort
   const filtered = useMemo(() => {
     let data = [...securities];
     if (search) {
       const q = search.toLowerCase();
-      data = data.filter(
-        (s) => s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
-      );
+      data = data.filter((s) => s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
     }
     if (category) data = data.filter((s) => s.category === category);
     data.sort((a, b) => {
@@ -116,32 +112,37 @@ export default function SecuritiesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[60vh] text-slate-400 animate-pulse">
-        Loading securities...
+      <div className="flex items-center justify-center h-[60vh]">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 text-slate-400">
+          <div className="w-8 h-8 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
+          <span className="font-medium">Loading securities...</span>
+        </motion.div>
       </div>
     );
   }
 
   const PIE_COLORS = Object.values(CATEGORY_COLORS);
+  const tooltipStyle = { background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 11 };
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 py-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Infrastructure Securities</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          40 equities & ETFs across the AI infrastructure value chain
+    <div className="max-w-[1600px] mx-auto px-6 py-8 space-y-6">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-3xl font-extrabold tracking-tight">
+          <span className="gradient-text">Infrastructure Securities</span>
+        </h1>
+        <p className="text-sm text-slate-500 mt-1">
+          40 equities &amp; ETFs across the AI infrastructure value chain
         </p>
-      </div>
+      </motion.div>
 
       {/* Heatmap */}
-      <BentoCard title="Market Heatmap" subtitle="Size = Market Cap · Colour = YTD Return" glow="blue">
+      <BentoCard title="Market Heatmap" subtitle="Size = Market Cap · Colour = YTD Return" glow="blue" delay={1}>
         <HeatmapGrid cells={heatmap} />
       </BentoCard>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Sector Breakdown Pie */}
-        <BentoCard title="Sector Breakdown" subtitle="Market cap by category">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <BentoCard title="Sector Breakdown" subtitle="Market cap by category" glow="purple" delay={2}>
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
               <Pie
@@ -163,95 +164,38 @@ export default function SecuritiesPage() {
                   <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 8,
-                  fontSize: 11,
-                }}
-              />
+              <Tooltip contentStyle={tooltipStyle} />
             </PieChart>
           </ResponsiveContainer>
         </BentoCard>
 
-        {/* Power Sensitivity Scatter */}
-        <BentoCard title="Power Sensitivity vs Return" subtitle="Bubble = AI revenue %" glow="green">
+        <BentoCard title="Power Sensitivity vs Return" subtitle="Bubble = AI revenue %" glow="green" delay={3}>
           <ResponsiveContainer width="100%" height={220}>
             <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
-              <XAxis
-                dataKey="power_demand_sensitivity"
-                name="Power Sens."
-                tick={{ fill: "#64748b", fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                dataKey="ytd_return"
-                name="YTD %"
-                tick={{ fill: "#64748b", fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
-              />
+              <XAxis dataKey="power_demand_sensitivity" name="Power Sens." tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis dataKey="ytd_return" name="YTD %" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip
-                contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 8,
-                  fontSize: 11,
-                }}
+                contentStyle={tooltipStyle}
                 formatter={(value: number, name: string) => [
-                  name === "YTD %" ? `${value}%` : value.toFixed(2),
-                  name,
+                  name === "YTD %" ? `${value}%` : value.toFixed(2), name,
                 ]}
               />
-              <Scatter
-                data={powerSens}
-                fill="#3b82f6"
-              >
+              <Scatter data={powerSens} fill="#3b82f6">
                 {powerSens.map((d, i) => (
-                  <Cell
-                    key={i}
-                    fill={CATEGORY_COLORS[d.category] || "#3b82f6"}
-                  />
+                  <Cell key={i} fill={CATEGORY_COLORS[d.category] || "#3b82f6"} />
                 ))}
               </Scatter>
             </ScatterChart>
           </ResponsiveContainer>
         </BentoCard>
 
-        {/* Avg YTD by Sector */}
-        <BentoCard title="Avg YTD Return by Sector" subtitle="Category performance">
+        <BentoCard title="Avg YTD Return by Sector" subtitle="Category performance" glow="orange" delay={4}>
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart
-              data={sectors.sort((a, b) => b.avg_ytd_return - a.avg_ytd_return)}
-              layout="vertical"
-              barSize={16}
-            >
-              <XAxis
-                type="number"
-                tick={{ fill: "#64748b", fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                type="category"
-                dataKey="label"
-                tick={{ fill: "#64748b", fontSize: 9 }}
-                axisLine={false}
-                tickLine={false}
-                width={100}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 8,
-                  fontSize: 11,
-                }}
-                formatter={(value: number) => [`${value}%`, "Avg YTD"]}
-              />
-              <Bar dataKey="avg_ytd_return" radius={[0, 4, 4, 0]}>
+            <BarChart data={sectors.sort((a, b) => b.avg_ytd_return - a.avg_ytd_return)} layout="vertical" barSize={16}>
+              <XAxis type="number" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="label" tick={{ fill: "#64748b", fontSize: 9 }} axisLine={false} tickLine={false} width={100} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [`${value}%`, "Avg YTD"]} />
+              <Bar dataKey="avg_ytd_return" radius={[0, 6, 6, 0]}>
                 {sectors.map((s, i) => (
                   <Cell key={i} fill={CATEGORY_COLORS[s.category] || "#6b7280"} />
                 ))}
@@ -262,36 +206,40 @@ export default function SecuritiesPage() {
       </div>
 
       {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px] max-w-[320px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+        className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px] max-w-[360px]">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
             placeholder="Search ticker or name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 focus:outline-none"
+          className="px-4 py-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer"
         >
           <option value="">All Categories</option>
           {sectors.map((s) => (
-            <option key={s.category} value={s.category}>
-              {s.label}
-            </option>
+            <option key={s.category} value={s.category}>{s.label}</option>
           ))}
         </select>
-      </div>
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+          <BarChart3 size={13} />
+          <span>{filtered.length} securities</span>
+        </div>
+      </motion.div>
 
       {/* Securities Table */}
-      <div className="glass-card overflow-x-auto">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+        className="glass-card overflow-x-auto glow-blue">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/5">
+            <tr className="border-b border-white/[0.06]">
               {[
                 { key: "ticker" as keyof Security, label: "Ticker" },
                 { key: "name" as keyof Security, label: "Name" },
@@ -306,57 +254,59 @@ export default function SecuritiesPage() {
                 <th
                   key={col.key}
                   onClick={() => toggleSort(col.key)}
-                  className="px-3 py-2.5 text-left text-xs font-semibold text-slate-400 cursor-pointer hover:text-white select-none"
+                  className="px-4 py-3 text-left text-[11px] font-bold text-slate-400 cursor-pointer hover:text-white select-none uppercase tracking-wider"
                 >
                   <span className="flex items-center gap-1">
                     {col.label}
-                    {sortBy === col.key && (
-                      <ArrowUpDown className="w-3 h-3" />
-                    )}
+                    {sortBy === col.key && <ArrowUpDown className="w-3 h-3 text-blue-400" />}
                   </span>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {filtered.map((s) => (
-              <tr
+            {filtered.map((s, i) => (
+              <motion.tr
                 key={s.ticker}
-                className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.01 }}
+                className="border-b border-white/[0.03] table-row-hover"
               >
-                <td className="px-3 py-2 font-mono font-semibold text-white">
-                  {s.ticker}
-                </td>
-                <td className="px-3 py-2 text-slate-300">{s.name}</td>
-                <td className="px-3 py-2">
+                <td className="px-4 py-2.5 font-mono font-bold text-white">{s.ticker}</td>
+                <td className="px-4 py-2.5 text-slate-300">{s.name}</td>
+                <td className="px-4 py-2.5">
                   <span
-                    className="text-xs px-2 py-0.5 rounded-full"
+                    className="tag-pill"
                     style={{
-                      background: `${CATEGORY_COLORS[s.category] || "#6b7280"}20`,
+                      background: `${CATEGORY_COLORS[s.category] || "#6b7280"}15`,
                       color: CATEGORY_COLORS[s.category] || "#6b7280",
+                      border: `1px solid ${CATEGORY_COLORS[s.category] || "#6b7280"}30`,
                     }}
                   >
                     {s.category.replace(/_/g, " ")}
                   </span>
                 </td>
-                <td className="px-3 py-2 font-mono">${s.price.toFixed(0)}</td>
-                <td className="px-3 py-2 font-mono">{s.market_cap_bn.toFixed(0)}</td>
-                <td
-                  className={`px-3 py-2 font-mono font-bold ${
-                    s.ytd_return >= 0 ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
-                  {s.ytd_return > 0 ? "+" : ""}
-                  {s.ytd_return.toFixed(1)}%
+                <td className="px-4 py-2.5 font-mono">${s.price.toFixed(0)}</td>
+                <td className="px-4 py-2.5 font-mono">{s.market_cap_bn.toFixed(0)}</td>
+                <td className={`px-4 py-2.5 font-mono font-bold ${s.ytd_return >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {s.ytd_return > 0 ? "+" : ""}{s.ytd_return.toFixed(1)}%
                 </td>
-                <td className="px-3 py-2 font-mono">{s.ai_infra_revenue_pct}%</td>
-                <td className="px-3 py-2 font-mono">{s.power_demand_sensitivity.toFixed(2)}</td>
-                <td className="px-3 py-2 font-mono">{s.esg_score}</td>
-              </tr>
+                <td className="px-4 py-2.5 font-mono">{s.ai_infra_revenue_pct}%</td>
+                <td className="px-4 py-2.5 font-mono">{s.power_demand_sensitivity.toFixed(2)}</td>
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full" style={{ width: `${s.esg_score}%`, background: s.esg_score > 70 ? "#10b981" : s.esg_score > 50 ? "#f59e0b" : "#ef4444" }} />
+                    </div>
+                    <span className="font-mono text-xs">{s.esg_score}</span>
+                  </div>
+                </td>
+              </motion.tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </motion.div>
     </div>
   );
 }
