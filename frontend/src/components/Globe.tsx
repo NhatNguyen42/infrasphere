@@ -172,10 +172,12 @@ function GlobeScene({
   nodes,
   connections,
   onNodeClick,
+  autoRotate,
 }: {
   nodes: InfraNode[];
   connections: Connection[];
   onNodeClick: (node: InfraNode) => void;
+  autoRotate: boolean;
 }) {
   const [hoveredNode, setHoveredNode] = useState<InfraNode | null>(null);
 
@@ -226,7 +228,7 @@ function GlobeScene({
         enableZoom={true}
         minDistance={1.5}
         maxDistance={4}
-        autoRotate
+        autoRotate={autoRotate}
         autoRotateSpeed={0.3}
         enableDamping
       />
@@ -244,13 +246,14 @@ interface GlobeProps {
 }
 
 export default function Globe({ nodes, connections, onNodeClick }: GlobeProps) {
+  const [spinning, setSpinning] = useState(true);
   const handleClick = useCallback(
     (node: InfraNode) => onNodeClick?.(node),
     [onNodeClick]
   );
 
   return (
-    <div style={{ width: "100%", height: "100%", minHeight: 400 }}>
+    <div style={{ width: "100%", height: "100%", minHeight: 400, position: "relative" }}>
       <Canvas
         camera={{ position: [0, 0, 2.8], fov: 45 }}
         style={{ background: "transparent" }}
@@ -260,8 +263,34 @@ export default function Globe({ nodes, connections, onNodeClick }: GlobeProps) {
           nodes={nodes}
           connections={connections}
           onNodeClick={handleClick}
+          autoRotate={spinning}
         />
       </Canvas>
+
+      {/* Spin toggle button */}
+      <button
+        onClick={() => setSpinning((s) => !s)}
+        style={{
+          position: "absolute",
+          bottom: 12,
+          right: 12,
+          background: "rgba(15, 23, 42, 0.8)",
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: 8,
+          color: "#e2e8f0",
+          padding: "6px 12px",
+          fontSize: 12,
+          cursor: "pointer",
+          backdropFilter: "blur(8px)",
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+        }}
+        title={spinning ? "Pause rotation" : "Resume rotation"}
+      >
+        <span style={{ fontSize: 14 }}>{spinning ? "⏸" : "▶"}</span>
+        {spinning ? "Pause" : "Spin"}
+      </button>
     </div>
   );
 }
