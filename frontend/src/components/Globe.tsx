@@ -138,8 +138,10 @@ function NodeTooltip({ node }: { node: InfraNode }) {
   useFrame((state) => {
     if (wrapRef.current) {
       const dist = state.camera.position.length(); // distance from origin
-      // At default zoom (2.8) scale=1, zoom in (1.5) → smaller, zoom out (4) → bigger
-      const scale = dist / 2.8;
+      // Dampen the scaling: use sqrt so it changes slower relative to zoom
+      // Base scale 1.2 at default zoom (2.8), gentle increase/decrease
+      const ratio = dist / 2.8;
+      const scale = 1.2 * Math.sqrt(ratio);
       wrapRef.current.style.transform = `scale(${scale})`;
     }
   });
