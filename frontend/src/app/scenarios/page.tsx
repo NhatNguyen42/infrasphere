@@ -146,7 +146,7 @@ export default function ScenariosPage() {
   const tooltipStyle = { background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 11 };
 
   return (
-    <div className="max-w-[min(1600px,92vw)] mx-auto px-6 py-8 space-y-6">
+    <div className="max-w-[1600px] 3xl:max-w-[85vw] 4xl:max-w-[90vw] mx-auto px-6 3xl:px-10 py-8 space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-extrabold tracking-tight">
           <span className="gradient-text">What-If Scenario Builder</span>
@@ -156,7 +156,7 @@ export default function ScenariosPage() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] 3xl:grid-cols-[460px_1fr] gap-6 3xl:gap-8">
         {/* Controls panel */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}
           className="glass-card p-6 space-y-5 glow-purple">
@@ -266,7 +266,8 @@ export default function ScenariosPage() {
               {/* Regional Impact + Security tables */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <BentoCard title="Regional Grid Impact" subtitle="Strain change by region" glow="orange" delay={3}>
-                  <ResponsiveContainer width="100%" height={250}>
+                  <div className="h-[250px] 3xl:h-[340px] 4xl:h-[420px]">
+                  <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={result.region_impacts
                         .sort((a, b) => b.strain_delta - a.strain_delta)
@@ -290,6 +291,7 @@ export default function ScenariosPage() {
                       <Bar dataKey="scenario" fill="url(#gradScenario)" radius={[4, 4, 0, 0]} name="Scenario" />
                     </BarChart>
                   </ResponsiveContainer>
+                  </div>
                 </BentoCard>
 
                 <BentoCard title="Security Impact" subtitle="Top beneficiaries and losers" glow="green" delay={4}>

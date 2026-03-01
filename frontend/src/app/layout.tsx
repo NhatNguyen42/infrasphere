@@ -20,7 +20,7 @@ const NAV_LINKS = [
 function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#030712]/70 backdrop-blur-2xl">
-      <div className="max-w-[min(1600px,92vw)] mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="max-w-[1600px] 3xl:max-w-[85vw] 4xl:max-w-[90vw] mx-auto px-6 3xl:px-10 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           {/* Animated gradient logo */}
           <div className="relative w-9 h-9">
@@ -73,7 +73,7 @@ export default function RootLayout({
         <Nav />
         <main className="flex-1 relative">{children}</main>
         <footer className="border-t border-white/[0.05] py-5">
-          <div className="max-w-[min(1600px,92vw)] mx-auto px-6 flex items-center justify-between text-[11px] text-slate-500">
+          <div className="max-w-[1600px] 3xl:max-w-[85vw] 4xl:max-w-[90vw] mx-auto px-6 3xl:px-10 flex items-center justify-between text-[11px] text-slate-500">
             <span className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               InfraSphere — AI Infrastructure & Power Grid Convergence

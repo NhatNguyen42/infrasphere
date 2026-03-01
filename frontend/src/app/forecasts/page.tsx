@@ -89,7 +89,7 @@ export default function ForecastsPage() {
   const tooltipStyle = { background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 11 };
 
   return (
-    <div className="max-w-[min(1600px,92vw)] mx-auto px-6 py-8 space-y-6">
+    <div className="max-w-[1600px] 3xl:max-w-[85vw] 4xl:max-w-[90vw] mx-auto px-6 3xl:px-10 py-8 space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-extrabold tracking-tight">
           <span className="gradient-text">Power Demand Forecasts</span>
@@ -138,7 +138,8 @@ export default function ForecastsPage() {
           glow="blue"
           delay={1}
         >
-          <ResponsiveContainer width="100%" height={350}>
+          <div className="h-[350px] 3xl:h-[460px] 4xl:h-[560px]">
+          <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={allPoints} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
@@ -165,13 +166,15 @@ export default function ForecastsPage() {
               <Area dataKey="renewable_supply_gw" stroke="#10b981" strokeWidth={1.5} strokeDasharray="4 4" fill="none" name="Renewable Supply" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
+          </div>
         </BentoCard>
       )}
 
       {/* Second row charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 3xl:gap-7">
         <BentoCard title="AI Power Demand by Region" subtitle="All tracked regions (GW)" glow="orange" delay={2}>
-          <ResponsiveContainer width="100%" height={280}>
+          <div className="h-[280px] 3xl:h-[360px] 4xl:h-[440px]">
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={aiTrendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <XAxis dataKey="year" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
@@ -183,10 +186,12 @@ export default function ForecastsPage() {
               ))}
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </BentoCard>
 
         <BentoCard title="Projected Demand (Final Year)" subtitle="Total demand vs AI demand (GW)" glow="green" delay={3}>
-          <ResponsiveContainer width="100%" height={280}>
+          <div className="h-[280px] 3xl:h-[360px] 4xl:h-[440px]">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={gapData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradBarTotal" x1="0" y1="0" x2="0" y2="1">
@@ -206,6 +211,7 @@ export default function ForecastsPage() {
               <Bar dataKey="ai_demand" fill="url(#gradBarAI)" radius={[6, 6, 0, 0]} name="AI Demand" />
             </BarChart>
           </ResponsiveContainer>
+          </div>
         </BentoCard>
       </div>
 

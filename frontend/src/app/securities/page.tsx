@@ -125,7 +125,7 @@ export default function SecuritiesPage() {
   const tooltipStyle = { background: "rgba(15,23,42,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 11 };
 
   return (
-    <div className="max-w-[min(1600px,92vw)] mx-auto px-6 py-8 space-y-6">
+    <div className="max-w-[1600px] 3xl:max-w-[85vw] 4xl:max-w-[90vw] mx-auto px-6 3xl:px-10 py-8 space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-extrabold tracking-tight">
           <span className="gradient-text">Infrastructure Securities</span>
@@ -141,9 +141,10 @@ export default function SecuritiesPage() {
       </BentoCard>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 3xl:gap-7">
         <BentoCard title="Sector Breakdown" subtitle="Market cap by category" glow="purple" delay={2}>
-          <ResponsiveContainer width="100%" height={220}>
+          <div className="h-[220px] 3xl:h-[300px] 4xl:h-[380px]">
+          <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={sectors}
@@ -167,10 +168,12 @@ export default function SecuritiesPage() {
               <Tooltip contentStyle={tooltipStyle} />
             </PieChart>
           </ResponsiveContainer>
+          </div>
         </BentoCard>
 
         <BentoCard title="Power Sensitivity vs Return" subtitle="Bubble = AI revenue %" glow="green" delay={3}>
-          <ResponsiveContainer width="100%" height={220}>
+          <div className="h-[220px] 3xl:h-[300px] 4xl:h-[380px]">
+          <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
               <XAxis dataKey="power_demand_sensitivity" name="Power Sens." tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
               <YAxis dataKey="ytd_return" name="YTD %" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
@@ -187,10 +190,12 @@ export default function SecuritiesPage() {
               </Scatter>
             </ScatterChart>
           </ResponsiveContainer>
+          </div>
         </BentoCard>
 
         <BentoCard title="Avg YTD Return by Sector" subtitle="Category performance" glow="orange" delay={4}>
-          <ResponsiveContainer width="100%" height={220}>
+          <div className="h-[220px] 3xl:h-[300px] 4xl:h-[380px]">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={sectors.sort((a, b) => b.avg_ytd_return - a.avg_ytd_return)} layout="vertical" barSize={16}>
               <XAxis type="number" tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} />
               <YAxis type="category" dataKey="label" tick={{ fill: "#64748b", fontSize: 9 }} axisLine={false} tickLine={false} width={100} />
@@ -202,6 +207,7 @@ export default function SecuritiesPage() {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+          </div>
         </BentoCard>
       </div>
 

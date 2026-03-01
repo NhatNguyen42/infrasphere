@@ -156,7 +156,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="max-w-[min(1600px,92vw)] mx-auto px-6 py-8">
+    <div className="max-w-[1600px] 3xl:max-w-[85vw] 4xl:max-w-[90vw] mx-auto px-6 3xl:px-10 py-8">
       {/* ── Page header ──────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
         <h1 className="text-3xl font-extrabold tracking-tight">
@@ -168,7 +168,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* ── Stats row ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 3xl:gap-6 mb-6">
         <StatCard
           label="Data Centres"
           value={stats ? stats.totalDC.toLocaleString() : "—"}
@@ -203,13 +203,12 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Globe + Insights ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] 3xl:grid-cols-[1fr_440px] 4xl:grid-cols-[1fr_520px] gap-5 3xl:gap-7 mb-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="glass-card glow-blue p-0 overflow-hidden relative"
-          style={{ minHeight: 520 }}
+          className="glass-card glow-blue p-0 overflow-hidden relative min-h-[520px] 3xl:min-h-[640px] 4xl:min-h-[760px]"
         >
           {globeData && (
             <Globe nodes={globeData.nodes} connections={globeData.connections} onNodeClick={setSelectedNode} />
@@ -250,15 +249,14 @@ export default function DashboardPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="glass-card p-5 glow-purple"
-          style={{ maxHeight: 560, overflow: "hidden" }}
+          className="glass-card p-5 glow-purple max-h-[560px] 3xl:max-h-[680px] 4xl:max-h-[800px] overflow-hidden"
         >
           <InsightsPanel insights={insights} />
         </motion.div>
       </div>
 
       {/* ── Bento grid ───────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 3xl:gap-7">
         <BentoCard title="Grid Strain Index" subtitle="Demand / Capacity by region" glow="orange" delay={1}>
           <div className="space-y-2.5">
             {regions
