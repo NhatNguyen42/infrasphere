@@ -129,37 +129,55 @@ function ArcConnection({
   );
 }
 
-/** Floating tooltip when hovering a node. */
+/** Floating tooltip when hovering a node. Scales inversely with zoom. */
 function NodeTooltip({ node }: { node: InfraNode }) {
   const pos = latLngToVector3(node.lat, node.lng, 1.15);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Track camera distance and scale tooltip inversely
+  useFrame((state) => {
+    if (wrapRef.current) {
+      const dist = state.camera.position.length(); // distance from origin
+      // At default zoom (2.8) scale=1, zoom in (1.5) → smaller, zoom out (4) → bigger
+      const scale = dist / 2.8;
+      wrapRef.current.style.transform = `scale(${scale})`;
+    }
+  });
 
   return (
-    <Html position={pos} center distanceFactor={6}>
+    <Html position={pos} center>
       <div
+        ref={wrapRef}
         style={{
-          background: "rgba(10,10,30,0.92)",
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: 10,
-          padding: "10px 14px",
-          color: "#f1f5f9",
-          fontSize: 12,
-          lineHeight: 1.5,
-          maxWidth: 220,
+          transformOrigin: "center center",
           pointerEvents: "none",
-          whiteSpace: "nowrap",
-          backdropFilter: "blur(8px)",
         }}
       >
-        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2, color: nodeColor(node.type) }}>
-          {node.name}
+        <div
+          style={{
+            background: "rgba(10,10,30,0.92)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 10,
+            padding: "10px 14px",
+            color: "#f1f5f9",
+            fontSize: 12,
+            lineHeight: 1.5,
+            maxWidth: 220,
+            whiteSpace: "nowrap",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2, color: nodeColor(node.type) }}>
+            {node.name}
+          </div>
+          <div style={{ color: "#94a3b8" }}>
+            {node.type.replace("_", " ").toUpperCase()} &middot; {node.subtype}
+          </div>
+          <div>Capacity: {node.capacity_mw.toLocaleString()} MW</div>
+          <div>Utilization: {(node.utilization * 100).toFixed(0)}%</div>
+          <div>Renewable: {(node.renewable_pct * 100).toFixed(0)}%</div>
+          <div style={{ color: "#94a3b8", fontSize: 11 }}>{node.operator}</div>
         </div>
-        <div style={{ color: "#94a3b8" }}>
-          {node.type.replace("_", " ").toUpperCase()} &middot; {node.subtype}
-        </div>
-        <div>Capacity: {node.capacity_mw.toLocaleString()} MW</div>
-        <div>Utilization: {(node.utilization * 100).toFixed(0)}%</div>
-        <div>Renewable: {(node.renewable_pct * 100).toFixed(0)}%</div>
-        <div style={{ color: "#94a3b8", fontSize: 11 }}>{node.operator}</div>
       </div>
     </Html>
   );
