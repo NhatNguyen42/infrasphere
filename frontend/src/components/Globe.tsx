@@ -134,7 +134,7 @@ function NodeTooltip({ node }: { node: InfraNode }) {
   const pos = latLngToVector3(node.lat, node.lng, 1.15);
 
   return (
-    <Html position={pos} center distanceFactor={3}>
+    <Html position={pos} center distanceFactor={6}>
       <div
         style={{
           background: "rgba(10,10,30,0.92)",
