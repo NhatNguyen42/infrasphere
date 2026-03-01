@@ -232,7 +232,7 @@ input[type="range"] {
 }
 
 /* Param sliders with per-slider accent color via CSS variables */
-.param-slider {
+input[type="range"].param-slider {
   -webkit-appearance: none;
   appearance: none;
   display: block;
@@ -246,7 +246,7 @@ input[type="range"] {
   outline: none;
   margin: 6px 0;
 }
-.param-slider::-webkit-slider-thumb {
+input[type="range"].param-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
@@ -261,13 +261,13 @@ input[type="range"] {
     0 0 14px color-mix(in srgb, var(--slider-color, #3b82f6) 50%, transparent);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.param-slider::-webkit-slider-thumb:hover {
+input[type="range"].param-slider::-webkit-slider-thumb:hover {
   transform: scale(1.25);
   box-shadow:
     0 0 0 2px var(--slider-color, #3b82f6),
     0 0 24px color-mix(in srgb, var(--slider-color, #3b82f6) 70%, transparent);
 }
-.param-slider::-moz-range-thumb {
+input[type="range"].param-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
