@@ -30,9 +30,9 @@ function ParamSlider({
           {value.toFixed(step < 1 ? 1 : 0)}{unit}
         </span>
       </div>
-      {/* Wrapper: visual track + invisible native input stacked */}
-      <div className="relative h-7 flex items-center">
-        {/* Visual filled track */}
+      {/* Track + native input stacked: input is in normal flow (correct hit area),
+          decorative fill sits behind it via absolute positioning */}
+      <div className="relative py-2">
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-white/[0.06] rounded-full overflow-hidden pointer-events-none">
           <motion.div
             className="h-full rounded-full"
@@ -42,12 +42,12 @@ function ParamSlider({
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           />
         </div>
-        {/* Native range input covers full area — transparent but interactive */}
         <input
           type="range"
           min={min} max={max} step={step} value={value}
           onChange={(e) => onChange(parseFloat(e.target.value))}
-          className="absolute inset-0 w-full opacity-0 cursor-pointer"
+          style={{ background: "transparent" }}
+          className="relative w-full cursor-pointer"
         />
       </div>
       <p className="text-[10px] text-slate-500">{description}</p>
