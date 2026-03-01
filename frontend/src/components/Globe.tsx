@@ -4,9 +4,9 @@
  * Shows data-centre clusters, power plants, renewables, grid hubs,
  * and animated energy-flow arcs between them.
  */
-import React, { useRef, useMemo, useState, useCallback } from "react";
+import React, { useRef, useMemo, useState, useCallback, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Stars, Line, Html } from "@react-three/drei";
+import { OrbitControls, Stars, Line, Html, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 import type { InfraNode, Connection } from "@/lib/api";
@@ -21,46 +21,31 @@ import {
 // Sub-components (inside Canvas)
 // ---------------------------------------------------------------------------
 
-/** The earth sphere with atmosphere glow. */
+/** The earth sphere with real texture and atmosphere glow. */
 function Earth() {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((_, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.02; // slow auto-rotate
-    }
-  });
+  const texture = useTexture(
+    "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+  );
 
   return (
     <group>
-      {/* Globe body */}
-      <mesh ref={meshRef}>
+      {/* Globe body with Blue Marble texture */}
+      <mesh>
         <sphereGeometry args={[1, 64, 64]} />
         <meshStandardMaterial
-          color="#0f172a"
-          roughness={0.9}
-          metalness={0.1}
-        />
-      </mesh>
-
-      {/* Wireframe overlay */}
-      <mesh>
-        <sphereGeometry args={[1.002, 36, 18]} />
-        <meshBasicMaterial
-          color="#1e3a5f"
-          wireframe
-          transparent
-          opacity={0.12}
+          map={texture}
+          roughness={0.85}
+          metalness={0.05}
         />
       </mesh>
 
       {/* Atmosphere glow */}
       <mesh>
-        <sphereGeometry args={[1.08, 64, 64]} />
+        <sphereGeometry args={[1.05, 64, 64]} />
         <meshBasicMaterial
-          color="#1e40af"
+          color="#3b82f6"
           transparent
-          opacity={0.06}
+          opacity={0.07}
           side={THREE.BackSide}
         />
       </mesh>
@@ -202,11 +187,13 @@ function GlobeScene({
 
   return (
     <>
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[5, 3, 5]} intensity={0.8} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 3, 5]} intensity={1.0} />
       <Stars radius={80} depth={60} count={2500} factor={3} fade speed={0.5} />
 
-      <Earth />
+      <Suspense fallback={null}>
+        <Earth />
+      </Suspense>
 
       {nodes.map((n) => (
         <NodeMarker
