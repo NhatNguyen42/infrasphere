@@ -1,6 +1,6 @@
 # InfraSphere
 
-A full-stack infrastructure investment analytics platform built as a portfolio project for BlackRock. InfraSphere provides real-time risk analytics, yield forecasting, scenario modelling, and securities screening across a global infrastructure asset portfolio — all visualised through an interactive 3D globe and rich data dashboards.
+A full-stack infrastructure investment analytics platform built as a portfolio project. InfraSphere provides real-time risk analytics, yield forecasting, scenario modelling, and securities screening across a global infrastructure asset portfolio — all visualised through an interactive 3D globe and rich data dashboards.
 
 **Live demo:** [infrasphere-one.vercel.app](https://infrasphere-one.vercel.app)
 
